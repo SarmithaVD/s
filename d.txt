@@ -1,0 +1,622 @@
+// A dynamic programming based
+// solution for 0-1 Knapsack problem
+#include <bits/stdc++.h>
+using namespace std;
+
+// A utility function that returns
+// maximum of two integers
+int max(int a, int b) { return (a > b) ? a : b; }
+
+// Returns the maximum value that
+// can be put in a knapsack of capacity W
+int knapSack(int W, int wt[], int val[], int n)
+{
+	int i, w;
+	vector<vector<int> > K(n + 1, vector<int>(W + 1));
+
+	// Build table K[][] in bottom up manner
+	for (i = 0; i <= n; i++) {
+		for (w = 0; w <= W; w++) {
+			if (i == 0 || w == 0)
+				K[i][w] = 0;
+			else if (wt[i - 1] <= w)
+				K[i][w] = max(val[i - 1]
+								+ K[i - 1][w - wt[i - 1]],
+							K[i - 1][w]);
+			else
+				K[i][w] = K[i - 1][w];
+		}
+	}
+	return K[n][W];
+}
+
+// Driver Code
+int main()
+{
+	int profit[] = { 60, 100, 120 };
+	int weight[] = { 10, 20, 30 };
+	int W = 50;
+	int n = sizeof(profit) / sizeof(profit[0]);
+
+	cout << knapSack(W, weight, profit, n);
+
+	return 0;
+}
+
+// This code is contributed by Debojyoti Mandal
+
+
+
+
+// C++ program to print largest contiguous array sum
+
+#include <climits>
+#include <iostream>
+using namespace std;
+
+void maxSubArraySum(int a[], int size)
+{
+	int max_so_far = INT_MIN, max_ending_here = 0,
+		start = 0, end = 0, s = 0;
+
+	for (int i = 0; i < size; i++) {
+		max_ending_here += a[i];
+
+		if (max_so_far < max_ending_here) {
+			max_so_far = max_ending_here;
+			start = s;
+			end = i;
+		}
+
+		if (max_ending_here < 0) {
+			max_ending_here = 0;
+			s = i + 1;
+		}
+	}
+	cout << "Maximum contiguous sum is " << max_so_far
+		<< endl;
+	cout << "Starting index " << start << endl
+		<< "Ending index " << end << endl;
+}
+
+/*Driver program to test maxSubArraySum*/
+int main()
+{
+	int a[] = { -2, -3, 4, -1, -2, 1, 5, -3 };
+	int n = sizeof(a) / sizeof(a[0]);
+	maxSubArraySum(a, n);
+	return 0;
+}
+
+
+
+
+#include <bits/stdc++.h>
+using namespace std;
+
+// Recursive function to count the numeber of distinct ways
+// to make the sum by using n coins
+
+int count(int* coins, int n, int sum,int** dp)
+{
+// Base Case
+if (sum == 0)
+return dp[n][sum] = 1;
+
+// If number of coins is 0 or sum is less than 0 then
+// there is no way to make the sum.
+if (n == 0 || sum < 0)
+return 0;
+
+// If the subproblem is previously calculated then
+// simply return the result
+if (dp[n][sum] != -1)
+return dp[n][sum];
+
+// Two options for the current coin
+return dp[n][sum]
+= count(coins, n, sum - coins[n - 1], dp)
++ count(coins, n - 1, sum, dp);
+}
+int32_t main()
+{
+int n, sum;
+n = 4, sum = 10;
+int* coins = new int[n];
+coins[0] = 2;
+coins[1] = 3;
+coins[2] = 5;
+coins[3] = 6;
+// 2d dp array to store previously calculated
+// results
+int** dp = new int*[n+1] ;
+for (int i=0;i<n+1;i++)
+    {
+        dp[i] = new int[sum+1];
+    }
+for (int i=0;i<n+1;i++)
+{
+   for (int j=0;j<sum+1;j++)
+   {
+       dp[i][j] = -1;
+   }
+}
+int res = count(coins, n, sum, dp);
+cout << res << endl;
+}
+
+
+// Dynamic Programming C++ implementation
+// of LCS problem
+#include <bits/stdc++.h>
+using namespace std;
+
+// Returns length of LCS for X[0..m-1],
+// Y[0..n-1]
+int lcs(string X, string Y, int m, int n)
+{
+
+	// Initializing a matrix of size
+	// (m+1)*(n+1)
+	int L[m + 1][n + 1];
+
+	// Following steps build L[m+1][n+1]
+	// in bottom up fashion. Note that
+	// L[i][j] contains length of LCS of
+	// X[0..i-1] and Y[0..j-1]
+	for (int i = 0; i <= m; i++) {
+		for (int j = 0; j <= n; j++) {
+			if (i == 0 || j == 0)
+				L[i][j] = 0;
+
+			else if (X[i - 1] == Y[j - 1])
+				L[i][j] = L[i - 1][j - 1] + 1;
+
+			else
+				L[i][j] = max(L[i - 1][j], L[i][j - 1]);
+		}
+	}
+
+	// L[m][n] contains length of LCS
+	// for X[0..n-1] and Y[0..m-1]
+	return L[m][n];
+}
+
+// Driver code
+int main()
+{
+	string S1 = "AGGTAB";
+	string S2 = "GXTXAYB";
+	int m = S1.size();
+	int n = S2.size();
+
+	// Function call
+	cout << "Length of LCS is " << lcs(S1, S2, m, n);
+
+	return 0;
+}
+
+
+
+class Solution {
+public:
+   map<int, bool> stone;
+   int lastPos;
+   map<pair<int, int>, bool> dp;
+   bool solve(int pos, int k) {
+      if (pos == lastPos)
+         return true;
+      if (k <= 0 || pos > lastPos)
+         return false;
+      if (dp.find({pos, k}) != dp.end())
+         return dp[{pos, k}];
+      if (stone[pos] == 1)
+         return dp[{pos, k}] = solve(pos + k, k) || 
+                               solve(pos + k - 1, k - 1) ||
+                               solve(pos + k + 1, k + 1);
+      return dp[{pos, k}] = false;
+   }
+   bool canCross(vector<int>& stones) {
+      lastPos = stones.back();
+      for (int x : stones)
+         stone[x] = 1;
+      if (stones[1] == 1)
+         return solve(1, 1);
+      return false;
+   }
+};
+
+
+// A Dynamic Programming solution for Rod cutting problem
+#include<iostream>
+#include <bits/stdc++.h>
+#include<math.h>
+using namespace std;
+
+// A utility function to get the maximum of two integers
+int max(int a, int b) { return (a > b)? a : b;}
+
+/* Returns the best obtainable price for a rod of length n and
+price[] as prices of different pieces */
+int cutRod(int price[], int n)
+{
+int val[n+1];
+val[0] = 0;
+int i, j;
+
+// Build the table val[] in bottom up manner and return the last entry
+// from the table
+for (i = 1; i<=n; i++)
+{
+	int max_val = INT_MIN;
+	for (j = 0; j < i; j++)
+		max_val = max(max_val, price[j] + val[i-j-1]);
+	val[i] = max_val;
+}
+
+return val[n];
+}
+
+/* Driver program to test above functions */
+int main()
+{
+	int arr[] = {1, 5, 8, 9, 10, 17, 17, 20};
+	int size = sizeof(arr)/sizeof(arr[0]);
+	cout <<"Maximum Obtainable Value is "<<cutRod(arr, size);
+	getchar();
+	return 0;
+}
+
+// This code is contributed by shivanisinghss2110
+
+
+
+// C++ program to find maximum revenue by placing
+// billboard on the highway with given constraints.
+#include<bits/stdc++.h>
+using namespace std;
+
+int maxRevenue(int m, int x[], int revenue[], int n,
+											int t)
+{
+	// Array to store maximum revenue at each miles.
+	int maxRev[m+1];
+	memset(maxRev, 0, sizeof(maxRev));
+
+	// actual minimum distance between 2 billboards.
+	int nxtbb = 0;
+	for (int i = 1; i <= m; i++)
+	{
+		// check if all billboards are already placed.
+		if (nxtbb < n)
+		{
+			// check if we have billboard for that particular
+			// mile. If not, copy the previous maximum revenue.
+			if (x[nxtbb] != i)
+				maxRev[i] = maxRev[i-1];
+
+			// we do have billboard for this mile.
+			else
+			{
+				// We have 2 options, we either take current
+				// or we ignore current billboard.
+
+				// If current position is less than or equal to
+				// t, then we can have only one billboard.
+				if (i <= t)
+					maxRev[i] = max(maxRev[i-1], revenue[nxtbb]);
+
+				// Else we may have to remove previously placed
+				// billboard
+				else
+					maxRev[i] = max(maxRev[i-t-1]+revenue[nxtbb],
+												maxRev[i-1]);
+
+				nxtbb++;
+			}
+		}
+		else
+			maxRev[i] = maxRev[i - 1];
+	}
+
+	return maxRev[m];
+}
+
+// Driven Program
+int main()
+{
+	int m = 20;
+	int x[] = {6, 7, 12, 13, 14};
+	int revenue[] = {5, 6, 5, 3, 1};
+	int n = sizeof(x)/sizeof(x[0]);
+	int t = 5;
+	cout << maxRevenue(m, x, revenue, n, t) << endl;
+	return 0;
+}
+
+
+
+// A C++ program for Bellman-Ford's single source
+// shortest path algorithm.
+#include <bits/stdc++.h>
+using namespace std;
+
+// a structure to represent a weighted edge in graph
+struct Edge {
+	int src, dest, weight;
+};
+
+// a structure to represent a connected, directed and
+// weighted graph
+struct Graph {
+	// V-> Number of vertices, E-> Number of edges
+	int V, E;
+
+	// graph is represented as an array of edges.
+	struct Edge* edge;
+};
+
+// Creates a graph with V vertices and E edges
+struct Graph* createGraph(int V, int E)
+{
+	struct Graph* graph = new Graph;
+	graph->V = V;
+	graph->E = E;
+	graph->edge = new Edge[E];
+	return graph;
+}
+
+// A utility function used to print the solution
+void printArr(int dist[], int n)
+{
+	printf("Vertex Distance from Source\n");
+	for (int i = 0; i < n; ++i)
+		printf("%d \t\t %d\n", i, dist[i]);
+}
+
+// The main function that finds shortest distances from src
+// to all other vertices using Bellman-Ford algorithm. The
+// function also detects negative weight cycle
+void BellmanFord(struct Graph* graph, int src)
+{
+	int V = graph->V;
+	int E = graph->E;
+	int dist[V];
+
+	// Step 1: Initialize distances from src to all other
+	// vertices as INFINITE
+	for (int i = 0; i < V; i++)
+		dist[i] = INT_MAX;
+	dist[src] = 0;
+
+	// Step 2: Relax all edges |V| - 1 times. A simple
+	// shortest path from src to any other vertex can have
+	// at-most |V| - 1 edges
+	for (int i = 1; i <= V - 1; i++) {
+		for (int j = 0; j < E; j++) {
+			int u = graph->edge[j].src;
+			int v = graph->edge[j].dest;
+			int weight = graph->edge[j].weight;
+			if (dist[u] != INT_MAX
+				&& dist[u] + weight < dist[v])
+				dist[v] = dist[u] + weight;
+		}
+	}
+
+	// Step 3: check for negative-weight cycles. The above
+	// step guarantees shortest distances if graph doesn't
+	// contain negative weight cycle. If we get a shorter
+	// path, then there is a cycle.
+	for (int i = 0; i < E; i++) {
+		int u = graph->edge[i].src;
+		int v = graph->edge[i].dest;
+		int weight = graph->edge[i].weight;
+		if (dist[u] != INT_MAX
+			&& dist[u] + weight < dist[v]) {
+			printf("Graph contains negative weight cycle");
+			return; // If negative cycle is detected, simply
+					// return
+		}
+	}
+
+	printArr(dist, V);
+
+	return;
+}
+
+// Driver's code
+int main()
+{
+	/* Let us create the graph given in above example */
+	int V = 5; // Number of vertices in graph
+	int E = 8; // Number of edges in graph
+	struct Graph* graph = createGraph(V, E);
+
+	// add edge 0-1 (or A-B in above figure)
+	graph->edge[0].src = 0;
+	graph->edge[0].dest = 1;
+	graph->edge[0].weight = -1;
+
+	// add edge 0-2 (or A-C in above figure)
+	graph->edge[1].src = 0;
+	graph->edge[1].dest = 2;
+	graph->edge[1].weight = 4;
+
+	// add edge 1-2 (or B-C in above figure)
+	graph->edge[2].src = 1;
+	graph->edge[2].dest = 2;
+	graph->edge[2].weight = 3;
+
+	// add edge 1-3 (or B-D in above figure)
+	graph->edge[3].src = 1;
+	graph->edge[3].dest = 3;
+	graph->edge[3].weight = 2;
+
+	// add edge 1-4 (or B-E in above figure)
+	graph->edge[4].src = 1;
+	graph->edge[4].dest = 4;
+	graph->edge[4].weight = 2;
+
+	// add edge 3-2 (or D-C in above figure)
+	graph->edge[5].src = 3;
+	graph->edge[5].dest = 2;
+	graph->edge[5].weight = 5;
+
+	// add edge 3-1 (or D-B in above figure)
+	graph->edge[6].src = 3;
+	graph->edge[6].dest = 1;
+	graph->edge[6].weight = 1;
+
+	// add edge 4-3 (or E-D in above figure)
+	graph->edge[7].src = 4;
+	graph->edge[7].dest = 3;
+	graph->edge[7].weight = -3;
+	
+	// Function call
+	BellmanFord(graph, 0);
+
+	return 0;
+}
+
+
+
+// See the Cormen book for details of the
+// following algorithm
+#include <bits/stdc++.h>
+using namespace std;
+
+// Matrix Ai has dimension p[i-1] x p[i]
+// for i = 1..n
+int MatrixChainOrder(int p[], int n)
+{
+
+	/* For simplicity of the program, one
+	extra row and one extra column are
+	allocated in m[][]. 0th row and 0th
+	column of m[][] are not used */
+	int m[n][n];
+
+	int i, j, k, L, q;
+
+	/* m[i, j] = Minimum number of scalar
+	multiplications needed to compute the
+	matrix A[i]A[i+1]...A[j] = A[i..j] where
+	dimension of A[i] is p[i-1] x p[i] */
+
+	// cost is zero when multiplying
+	// one matrix.
+	for (i = 1; i < n; i++)
+		m[i][i] = 0;
+
+	// L is chain length.
+	for (L = 2; L < n; L++)
+	{
+		for (i = 1; i < n - L + 1; i++)
+		{
+			j = i + L - 1;
+			m[i][j] = INT_MAX;
+			for (k = i; k <= j - 1; k++)
+			{
+				// q = cost/scalar multiplications
+				q = m[i][k] + m[k + 1][j]
+					+ p[i - 1] * p[k] * p[j];
+				if (q < m[i][j])
+					m[i][j] = q;
+			}
+		}
+	}
+
+	return m[1][n - 1];
+}
+
+// Driver Code
+int main()
+{
+	int arr[] = { 1, 2, 3, 4 };
+	int size = sizeof(arr) / sizeof(arr[0]);
+
+	cout << "Minimum number of multiplications is "
+		<< MatrixChainOrder(arr, size);
+
+	getchar();
+	return 0;
+}
+
+// This code is contributed
+// by Akanksha Rai
+
+
+
+def f(n):
+  return max(fl(n),fh(n))
+def fl(n):
+  if n>=0:
+    return f(n-1)+x["low"][n]
+  else:
+    return 0
+def fh(n):
+  if n>=0:
+    return f(n-2)+x["high"][n]
+  else:
+    return 0
+x={"low":(30,5,20,25,500),"high":(0,50,70,100,110)}
+print f(4)
+#650
+
+
+#edit distance 
+#include <string>
+#include <iostream>
+using namespace std;
+
+// Compute Levenshtein Distance
+// Martin Ettl, 2012-10-05
+
+size_t uiLevenshteinDistance(const string &s1, const string &s2)
+{
+  const size_t
+    m(s1.size()),
+    n(s2.size());
+
+  if( m==0 ) return n;
+  if( n==0 ) return m;
+
+  // allocation below is not ISO-compliant,
+  // it won't work with -pedantic-errors.
+  size_t costs[n + 1];
+
+  for( size_t k=0; k<=n; k++ ) costs[k] = k;
+
+  size_t i { 0 };
+  for (char const &c1 : s1) 
+  {
+    costs[0] = i+1;
+    size_t corner { i },
+           j      { 0 };
+    for (char const &c2 : s2)
+    {
+      size_t upper { costs[j+1] };
+      if( c1 == c2 ) costs[j+1] = corner;
+      else {
+        size_t t(upper<corner? upper: corner);
+        costs[j+1] = (costs[j]<t?costs[j]:t)+1;
+      }
+
+      corner = upper;
+      j++;
+    }
+    i++;
+  }
+
+  return costs[n];
+}
+
+int main()
+{
+  string s0 { "rosettacode" },
+         s1 { "raisethysword" };
+  cout << "distance between " << s0 << " and " << s1 << " : " 
+    << uiLevenshteinDistance(s0,s1) << endl;
+
+  return 0;
+}
