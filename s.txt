@@ -1,0 +1,606 @@
+# Bisection method
+
+from sympy import *
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+
+a = float(input("Enter the lower limit value of the interval: "))
+b = float(input("Enter the upper limit value of the interval: "))
+
+#---------------------------------------------------------------------
+# Getting the Equation
+#---------------------------------------------------------------------
+
+x = var('x')
+fx = input("\nEnter the Homogenous equation : ")
+fx = sympify(fx)
+
+#---------------------------------------------------------------------
+
+while a >= b:
+    print("\n\n***Wrong Interval***")    
+    a = float(input("Enter the lower limit value of the interval: "))
+    b = float(input("Enter the Vupper limit value of the interval: "))
+
+midpoint = float(a + b) / 2
+
+print('\n')
+while ( (str(a))[0:6] != (str(b))[0:6] ) :
+    if ( (fx.subs(x,a)*fx.subs(x,midpoint)) < 0) :
+        b = midpoint
+    else :
+        a = midpoint
+    midpoint = (a + b) / 2
+    print(a, " - ", b)    
+
+print("\nThe root of the Equation = ", a, '\n')
+
+p = plot(fx, (x,a,b))
+
+
+
+# Regula Falsi method
+
+from sympy import *
+import numpy as np
+import matplotlib.pyplot as plt
+import sys
+
+a = float(input("Enter the Value of lower limit of the interval : "))
+b = float(input("Enter the Value of upper limit of the interval : "))
+
+#---------------------------------------------------------------------
+# Getting the Equation
+#---------------------------------------------------------------------
+
+x = var('x')
+fx = input("\nEnter the Homogenous equation : ")
+fx = sympify(fx)
+
+#---------------------------------------------------------------------
+
+x1 = 1
+xprev = 0
+
+print('\n')
+while ( (str(xprev))[0:6] != (str(x1))[0:6] ) :
+    if(xprev == x1):
+        break    
+    xprev = x1    
+    print(a, " - ", b)    
+    x1 = a + (( fx.subs(x,a)) * abs(b-a)) / ((fx.subs(x,a)) + (fx.subs(x,b)) )    
+    if( fx.subs(x,a) * fx.subs(x,b) < 0 ):
+        b = x1
+    else:
+        a = x1
+
+print("\nThe root of the Equation = ", x1, '\n')
+
+p = plot(fx, (x,a,b))
+
+
+
+# Newton Raphson method
+
+import numpy as np
+from sympy import *
+
+def newtonRaphsonMethod(ex, a):
+    x = symbols('x')
+    f1 = ex.subs(x, a)
+    ex1 = diff(ex, x)
+    f2 = ex1.subs(x, a)
+    h = f1 / f2
+    count = 0
+    while(abs(h) >= 0.001):        
+        f1 = ex.subs(x, a)
+        ex1 = diff(ex, x)
+        f2 = ex1.subs(x, a)
+        h = f1 / f2
+        m = a - h
+        print(str("%.4f"%a) + "\t" + str("%.4f"%h) + "\t" + str("%.4f"%f1) + "\t" + str("%.4f"%f2) + "\t" + str("%.4f"%m))
+        a = m
+        count = count + 1
+    print("\nThe root of the Equation = ", "%.4f"%a, '\n')
+
+#---------------------------------------------------------------------
+# Getting the Equation
+#---------------------------------------------------------------------
+            
+expr = input("Enter the Homogenous function : ")
+expr = sympify(expr)
+
+#---------------------------------------------------------------------
+
+a, b = map(int, (input("Enter the end points of the interval : ").split()))
+x=symbols('x')
+f1 = expr.subs(x, a)
+f2 = expr.subs(x, b)
+
+print("\na\th\tf(a)\tf'(a)\ta(next) ")
+if(f1 == 0):
+    print('a whose value is ' + a + " is the root ")
+elif(f2 == 0):
+    print('b whose value is ' + b + ' is the root ') 
+else :
+    sol = newtonRaphsonMethod(expr, a)
+
+p1 = plot(expr, (x, a, b))
+
+
+
+# Fixed Point Iteration method
+
+import sympy as sp
+
+x = sp.symbols('x')
+tolerance = 0.0001
+
+#---------------------------------------------------------------------
+# Getting the Equation
+#---------------------------------------------------------------------
+
+equation_str = input("Enter the Homogenous equation : ")
+equation = sp.sympify(equation_str)
+
+#---------------------------------------------------------------------
+
+initial_guess = 0
+max_iterations = 20
+f = sp.lambdify(x, equation, 'numpy')
+
+def fixed_point_iteration(f):
+    x_n = initial_guess
+    iteration = 0
+    print("\nIteration table:")
+    print("Iteration\t x_n")
+    
+    while iteration < max_iterations:
+        x_n_plus_1 = f(x_n)
+        print(f"{iteration}\t\t {x_n}")
+        
+        if abs(x_n_plus_1 - x_n) < tolerance:
+            print("\nConverged to the desired tolerance.")
+            return x_n_plus_1
+        
+        x_n = x_n_plus_1
+        iteration += 1
+
+    print("\nMaximum number of iterations reached.")
+    return None
+
+result = fixed_point_iteration(f)
+
+if result is not None:
+    print(f"\nThe root of the Equation approximately = {result}\n")
+    sp.plot(equation, (x, result - 2, result + 2), line_color='blue', title='Graph of the Equation', xlabel='x', ylabel='f(x)', show=True)
+else:
+    print("\nFixed-point iteration did not converge within the maximum number of iterations.")
+
+
+
+# Linear Interpolation
+
+import matplotlib.pyplot as plt
+
+#---------------------------------------------------------------------
+#Getting the points
+#---------------------------------------------------------------------
+
+x1,y1 = map(float, input("Enter (x1,y1) : ").split())
+x2,y2 = map(float, input("Enter (x2,y2) : ").split())
+point = float(input("\tEnter x at which the interpolated value to be found: "))
+
+#---------------------------------------------------------------------
+
+ya = y1 + (point - x1)*(y2 - y1)/(x2 - x1)
+
+print(f"\nf({point}) = {ya}")
+
+x = range(int(x1), int(x2)+1)
+m = (y2-y1) / (x2-x1)
+y = []
+c = y1 - m*x1
+for i in range(len(x)):
+    y.append(int(m*x[i] + c))
+    
+print(f"y = {m}*x + {c}\n")
+plt.plot(x, y)
+plt.scatter([x1, x2], [y1, y2])
+plt.scatter(point,ya, color='red')
+
+
+
+# Quadratic Interpolation
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+def quadratic(x, b0, b1, b2, x1, x2):
+    return b0 + b1*(x-x1) + b2*(x-x1)*(x-x2)
+
+#---------------------------------------------------------------------
+#Getting the points
+#---------------------------------------------------------------------
+
+x1, y1 = map(float, input("Enter (x1,y1): ").split())
+x2, y2 = map(float, input("Enter (x2,y2): ").split())
+x3, y3 = map(float, input("Enter (x3,y3): ").split())
+x = float(input("\tEnter x at which the interpolated value to be found: "))
+
+#---------------------------------------------------------------------
+
+b0 = y1
+b1 = (y2-y1) / (x2-x1)
+b2 = (((y3-y2) / (x3-x2)) - b1) / (x3-x1)
+
+print("\nQuadratic polynomial: y = ", b0, " + ", b1, "(x - ", x1, ") + ", b2, "(x - ", x2, ")")
+
+y = quadratic(x, b0, b1, b2, x1, x2)
+
+print("f(", x, ") = ", y, '\n')
+
+x_min = min(x1, x2, x3)
+x_max = max(x1, x2, x3)
+x_range = np.linspace(x_min, x_max , 100)
+y_range = quadratic(x_range, b0, b1, b2, x1, x2)
+
+plt.plot(x_range, y_range)
+plt.scatter([x1, x2, x3], [y1, y2, y3])
+plt.scatter(x, y, color="red")
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title('Quadratic Polynomial')
+plt.show()
+
+
+
+# Newton's Divided Difference Interpolation method
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+def divided_difference(x, y, n):
+    table = np.zeros((n, n))
+    table[:, 0] = y
+    
+    for j in range(1, n):
+        for i in range(n - j):
+            table[i][j] = (table[i + 1][j - 1] - table[i][j - 1]) / (x[i + j] - x[i])
+    
+    return table
+
+def newton_interpolation(x, y, n, xi):
+    table = divided_difference(x, y, n)
+    val = y[0]
+    product = 1
+    
+    for j in range(1, n):
+        product *= (xi - x[j - 1])
+        val += table[0][j] * product
+    
+    return val
+
+n = int(input("Enter the number of data points: "))
+xList = []
+yList = []
+
+print('\n')
+
+#---------------------------------------------------------------------
+#Getting the points
+#---------------------------------------------------------------------
+
+for i in range(n):
+    x = float(input(f"Enter x{i + 1} : "))
+    y = float(input(f"Enter y{i + 1} : "))
+    xList.append(x)
+    yList.append(y)
+
+#---------------------------------------------------------------------
+
+x_ip = float(input("\tEnter x at which the interpolated value to be found : "))
+interpolated_value = newton_interpolation(xList, yList, n, x_ip)
+
+print("\nDivided Difference Table :")
+table = divided_difference(xList, yList, n)
+
+for i in range(n):
+    for j in range(n - i):
+        print(round(table[i][j], 4), "\t", end = " ")
+    print("")
+
+print(f"\nInterpolated value: f({x_ip}) = {interpolated_value}\n")
+
+x_values = np.linspace(min(xList), max(xList), 100)
+y_values = [newton_interpolation(xList, yList, n, xi) for xi in x_values]
+
+plt.plot(xList, yList, 'ro')
+plt.plot(x_values, y_values, 'b-')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.show()
+
+
+
+# Lagrange's Interpolation method
+
+import sympy as sp
+
+a = []
+y = []
+
+n = int(input("Enter the no.of points : "))
+
+#---------------------------------------------------------------------
+#Getting the points
+#---------------------------------------------------------------------
+
+print('\n')
+for i in range(n):
+    temp = float(input("Enter the values of x" + str(i) + " : " ))
+    a.append(temp)
+    temp = float(input("Enter the values of f(x" + str(i) + ") : "))
+    y.append(temp)
+
+#---------------------------------------------------------------------
+
+yp = 0
+pt = float(input("\tEnter x at which the interpolated value to be found : "))
+x  = sp.Symbol('x')
+
+for i in range(n):
+    p = 1
+    for j in range(n):
+        if i != j:
+            p = p * (x - a[j])/(a[i] - a[j])
+    yp = yp + p * y[i] 
+
+print("\nInterpolated expression =", yp)
+val = round(yp.subs(x, pt), 4)
+print(f"Interpolated value: f({pt}) = {val}\n")
+
+y_interp = []
+x_interp = np.linspace(min(a), max(a), 1000)
+for i in x_interp:
+  val = round(yp.subs(x, i), 4)
+  y_interp.append(val)
+
+plt.plot(x_interp, y_interp, label='Lagrange Interpolation', color='blue', linewidth=2)
+plt.scatter(x_values, y_values, color='red', marker='o', label='Data Points')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.title('Lagrange Interpolation')
+plt.grid(True)
+plt.show()
+
+
+
+# Inverse Lagrange's method
+
+import sympy as sp
+
+a = []
+y = []
+
+n = int(input("Enter the no.of points : "))
+
+#---------------------------------------------------------------------
+#Getting the points
+#---------------------------------------------------------------------
+
+print('\n')
+for i in range(n):    
+    temp = float(input("Enter the values of x" + str(i) + " : " ))
+    a.append(temp)
+    temp = float(input("Enter the values of f(x" + str(i) + ") : "))
+    y.append(temp)
+
+# -----------------------------------------------------------------------------
+
+yp = 0
+pt = float(input("\tEnter the interpolated value : "))
+b  = sp.Symbol('b')
+
+for i in range(n):
+    p = 1
+    for j in range(n):
+        if i != j:
+            p = p * (b - y[j]) / (y[i] - y[j])
+    yp = yp + p * a[i]
+
+print("\nThe value of x = ", round(yp.subs(b, pt), 4))
+
+x_interp = []
+y_interp = np.linspace(min(y), max(y), 1000)
+for i in y_interp:
+  val = round(yp.subs(b, i), 4)
+  x_interp.append(val)
+
+plt.plot(x_interp, y_interp, label='Lagrange Interpolation', color='blue', linewidth=2)
+plt.scatter(x_values, y_values, color='red', marker='o', label='Data Points')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.title('Lagrange Interpolation')
+plt.grid(True)
+plt.show()
+
+
+
+# Cubic Spline Interpolation method
+
+import numpy as np
+import matplotlib.pyplot as plt
+n = int(input("Enter the number of data points: "))
+
+x_values = np.zeros(n)
+y_values = np.zeros(n)
+
+for i in range(n):
+    x = float(input(f"Enter x{i + 1}: "))
+    y = float(input(f"Enter f(x{i + 1}): "))
+    x_values[i] = x
+    y_values[i] = y
+
+# Calculate the slopes (derivatives) m[i] for each interval
+h = np.diff(x_values)
+delta_y = np.diff(y_values)
+delta_x = np.diff(x_values)
+
+m = np.zeros(n)
+m[1:n-1] = (6 * delta_y[1:] / delta_x[1:] - 6 * delta_y[:-1] / delta_x[:-1]) / (2 * (delta_x[1:] + delta_x[:-1]))
+
+# Define a function for cubic spline interpolation within an interval
+def cubic_spline_interpolation(x, xi, yi, mi, xi1, yi1, mi1):
+    term1 = (xi1 - x)**3 * mi
+    term2 = (x - xi)**3 * mi1
+    term3 = (xi1 - x) * (yi - 1/6 * mi)
+    term4 = (x - xi) * (yi1 - 1/6 * mi1)
+    return term1 / 6 + term2 / 6 + term3 + term4
+
+# Generate x values for interpolation
+x_interp = np.linspace(min(x_values), max(x_values), 1000)
+y_interp = np.zeros_like(x_interp)
+
+# Interpolate values for each interval
+for i in range(n - 1):
+    mask = (x_values[i] <= x_interp) & (x_interp <= x_values[i + 1])
+    y_interp[mask] = cubic_spline_interpolation(x_interp[mask], x_values[i], y_values[i], m[i], x_values[i + 1], y_values[i + 1], m[i + 1])
+
+# Plot the cubic spline interpolation
+plt.plot(x_interp, y_interp, label='Cubic Spline Interpolation', color='blue', linewidth=2)
+plt.scatter(x_values, y_values, color='red', marker='o', label='Data Points')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.title('Cubic Spline Interpolation')
+plt.grid(True)
+
+x_to_find = float(input("Enter the x-coordinate to find f(x): "))
+y_to_find = cubic_spline_interpolation(x_to_find, x_values[-2], y_values[-2], m[-2], x_values[-1], y_values[-1], m[-1])
+print(f"f({x_to_find}) = {y_to_find:.2f}")
+
+polynomial_equation = []
+for i in range(n - 1):
+    xi, xi1 = x_values[i], x_values[i + 1]
+    yi, yi1 = y_values[i], y_values[i + 1]
+    mi, mi1 = m[i], m[i + 1]
+    term1 = f"{(xi1 - x_interp)**3 * mi:.4f}"
+    term2 = f"{(x_interp - xi)**3 * mi1:.4f}"
+    term3 = f"{(xi1 - x_interp) * (yi - 1/6 * mi):.4f}"
+    term4 = f"{(x_interp - xi) * (yi1 - 1/6 * mi1):.4f}"
+    polynomial_equation.append(f"{term1} + {term2} + {term3} + {term4}")
+
+polynomial_equation_str = "f(x) = " + " + ".join(polynomial_equation)
+
+print("Polynomial Equation:")
+print(polynomial_equation_str)
+
+plt.show()
+
+
+
+# CUBIC SPLINE (In Built)
+
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.interpolate import CubicSpline
+
+n = int(input("Enter the number of data points: "))
+x_values = []
+y_values = []
+
+for i in range(n):
+    x = float(input(f"Enter x[{i}]: "))
+    y = float(input(f"Enter f(x[{i}]): "))
+    x_values.append(x)
+    y_values.append(y)
+
+x_interp = float(input("Enter the value of x for interpolation: "))
+
+cs = CubicSpline(x_values, y_values)
+
+y_interp = cs(x_interp)
+
+print(f"Interpolated polynomial:\n  {cs.c}")
+
+print(f"f({x_interp}) ≈ {y_interp}")
+
+x_range = np.linspace(min(x_values), max(x_values), 100)
+y_range = cs(x_range)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x_range, y_range, label='Interpolated Polynomial', color='b')
+plt.scatter(x_values, y_values, label='Data Points', color='r')
+plt.scatter(x_interp, y_interp, label=f'f({x_interp}) ≈ {y_interp:.4f}', color='g', marker='x')
+plt.xlabel('x')
+plt.ylabel('f(x)')
+plt.legend()
+plt.title('Cubic Spline Interpolation')
+plt.grid(True)
+plt.show()
+
+
+
+# Newton's Forward and Backward Interpolation methods
+
+import numpy as np
+import matplotlib.pyplot as plt
+def diff(x, y, forward=True):
+    n = len(x)
+    f = np.zeros((n, n))
+    for i in range(n):
+        f[i, 0] = y[i]
+    for j in range(1, n):
+        for i in range(n - j):
+            if forward:
+                f[i, j] = (f[i + 1, j - 1] - f[i, j - 1]) / (x[i + j] - x[i])
+            else:
+                f[i, j] = (f[i, j - 1] - f[i - 1, j - 1]) / (x[i] - x[i - j])
+    return f
+
+def nInterpolation(x, y, xi, forward=True):
+    n = len(x)
+    f = diff(x, y, forward)
+    
+    result = 0.0
+    for i in range(n):
+        term = f[0, i]
+        for j in range(i):
+            if forward:
+                term *= (xi - x[j])
+            else:
+                term *= (xi - x[n - 1 - j])
+        result += term
+    
+    return result
+
+def table(x, f):
+    n = len(x)
+    for i in range(n):
+        print(f'x{i} = {x[i]},', end=' ')
+        for j in range(n - i):
+            print(f'f{i + j} = {f[i, j]:.2f}', end='   ')
+        print()
+x = [3, 4, 5, 6, 7, 8, 9]
+y = [4.8, 8.4, 14.5, 23.6, 36.2, 52.8, 73.9]
+xi = 3.5
+xii = 8.5
+
+print("Newton's Forward Interpolation:")
+fwd = nInterpolation(x, y, xi, forward=True)
+fTable = diff(x, y, forward=True)
+table(x, fTable)
+print("\nValue at ", xi, "=  ", fwd)
+
+print("\nNewton's Backward Interpolation:")
+bwd = nInterpolation(x, y, xii, forward=False)
+bTable = diff(x, y, forward=False)
+table(x, bTable)
+print("\nValue at ", xii, "=  ", bwd)
+
+plt.plot(x,y)
+plt.show()
